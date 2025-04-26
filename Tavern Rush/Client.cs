@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
     enum Temperament
     {
@@ -16,7 +10,7 @@ namespace Tavern_Rush
     }
     internal class Client
     {
-        private List<string> _names = new List<string>()
+        private readonly List<string> _names = new List<string>()
         {
             "Сир Седрик Железное Сердце",
             "Леди Элира Лунная Тень",
@@ -39,7 +33,7 @@ namespace Tavern_Rush
             "Кара Серебряное Пламя",
             "Финниан Штормовой Плащ"
         };
-        private Dictionary<Temperament, string> clientPhrases = new Dictionary<Temperament, string>
+        private readonly Dictionary<Temperament, string> _clientPhrases = new Dictionary<Temperament, string>
         {
             { Temperament.Meticulous, "🔍😐 Я не потерплю промедлений. Сделайте как надо — и быстро." },
             { Temperament.LaidBack, "🍃😎 Да не торопись ты, я тут отдыхаю." },
@@ -49,13 +43,12 @@ namespace Tavern_Rush
         };
 
         public string Name { get; private set; }
-        private Temperament _temperament;
+        private readonly Temperament _temperament;
         private int _timeToServe;
         public int AllowedMistakes { get; private set; }
 
-        public Client()
+        public Client(Random random)
         {
-            Random random = new Random();
             _temperament = GenerateRandomTemperament(random);
             SetServiceParameters(_temperament);
             Name = _names[random.Next(0, _names.Count)];
@@ -93,13 +86,11 @@ namespace Tavern_Rush
                     _timeToServe = 7;
                     AllowedMistakes = 0;
                     break;
-                default:
-                    break;
             }
         }
         public void SayPhrase()
         {
-            Console.WriteLine($"{clientPhrases[_temperament]}");
+            Console.WriteLine($"{_clientPhrases[_temperament]}");
         }
     }
 }

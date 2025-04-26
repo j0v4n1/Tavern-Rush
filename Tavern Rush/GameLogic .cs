@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
     internal class GameLogic
     {
@@ -30,21 +24,14 @@ namespace Tavern_Rush
                     case "Отдать заказ":
                         validCode[4] = i + 1;
                         break;
-                    default:
-                        break;
                 }
             }
             return validCode;
         }
 
-        public static bool isValidCode(string orderCode, int[] validCode, Client client)
+        public static bool IsValidCode(string orderCode, int[] validCode, Client client)
         {
             int mistakes = 0;
-
-            if (!int.TryParse(orderCode, out int result))
-            {
-                return false;
-            }
 
             for (int i = 0; i < validCode.Length; i++)
             {
@@ -61,7 +48,7 @@ namespace Tavern_Rush
             return true;
         }
 
-        public static string[] mixActions(string[] actions, Random random, string specialAction)
+        public static string[] MixActions(string[] actions, Random random, string specialAction)
         {
             List<string> mixedActions = new List<string>();
             List<int> usedIndexes = new List<int>();

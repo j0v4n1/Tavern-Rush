@@ -1,54 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
     internal class Warehouse
     {
-        private Dictionary<string, int> _stock = new();
+        private readonly Dictionary<ProductType, (Product product, int quantity)> _stock = new();
 
-        public Warehouse(int tavernLevel, Product product)
+        public Warehouse(int tavernLevel)
         {
-            GenerateWarehouse(tavernLevel, products);
+            GenerateWarehouse(tavernLevel);
         }
         public void ShowInfoStore()
         {
             Console.WriteLine("Ваш склад: ");
             foreach (var item in _stock)
             {
-                if (item.Value == 0)
+                if (item.Value.quantity == 0)
                 {
                     continue;
                 }
-                Console.WriteLine($"{item.Key} в количистве {item.Value}");
+                Console.WriteLine($"{item.Value.product.Name} в количистве {item.Value.quantity}");
             }
             Console.WriteLine();
         }
 
-        public List<string> GetProductsFromWarehouse()
+        public List<Product> GetProductsFromWarehouse()
         {
-            List<string> products = new List<string>();
+            List<Product> products = new List<Product>();
             foreach (var item in _stock)
             {
-                products.Add(item.Key);
+                if (item.Value.quantity == 0)
+                {
+                    continue;
+                }
+                products.Add(item.Value.product);
             }
             return products;
         }
 
-        private void GenerateWarehouse(int tavernLevel, List<Product> products)
+        private void GenerateWarehouse(int tavernLevel)
         {
-
-            for (int i = 0; i < products.Count; i++)
+            foreach (ProductType productType in Enum.GetValues(typeof(ProductType)))
             {
-                if (products[i].GetAvailabilityByLevel(products[i].ProductType) <= tavernLevel)
+                Product productInstanse = new Product(productType);
+
+                if (productInstanse.GetAvailabilityByLevel(productType) <= tavernLevel)
                 {
-                    _stock.Add(products[i].GetName(products[i].ProductType), 10);
+                    _stock.Add(productType, (productInstanse, 5));
+                    continue;
                 }
+                _stock.Add(productType, (productInstanse, 0));
             }
         }
+
+        public void RefillProducts(int tavernLevel)
+        {
+            Console.WriteLine();
+            ShowInfoStore();
+
+            Console.WriteLine("Выберите какие продукты заказать и сколько:");
+
+            foreach (var item in _stock)
+            {
+                if (item.Value.product.GetAvailabilityByLevel(item.Key) <= tavernLevel)
+                {
+                    Console.WriteLine($"{item.Value.product.Name} стоит {item.Value.product.Price} золотых 💰");
+
+                }
+            }
+            Console.ReadKey();
+        }
+
+        public void UseProductForOrder(Product[] orderProducts)
+        {
+            foreach (var item in orderProducts)
+            {
+                var (product, quantity) = _stock[item.ProductType];
+                quantity -= 1;
+                _stock[item.ProductType] = (product, quantity);
+            }
+        }
+
     }
 }
 

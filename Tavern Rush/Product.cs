@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
 
     enum ProductType
@@ -26,7 +18,7 @@ namespace Tavern_Rush
 
     internal class Product
     {
-        private readonly Dictionary<ProductType, string> ProductNames = new()
+        private readonly Dictionary<ProductType, string> _productNames = new()
         {
             { ProductType.Ale, "Эль 🍺" },
             { ProductType.Sausage, "Колбаса 🌭" },
@@ -40,7 +32,7 @@ namespace Tavern_Rush
             { ProductType.Dessert, "Десерт 🍰" },
             { ProductType.Mead, "Медовуха 🍯" }
         };
-        private readonly Dictionary<ProductType, int> ProductPrices = new()
+        private readonly Dictionary<ProductType, int> _productPrices = new()
         {
             { ProductType.Ale, 3 },
             { ProductType.Sausage, 4 },
@@ -54,7 +46,7 @@ namespace Tavern_Rush
             { ProductType.Dessert, 4 },
             { ProductType.Mead, 5 }
         };
-        private readonly Dictionary<ProductType, int> productAvailabilityByTavernLevel = new()
+        private readonly Dictionary<ProductType, int> _productAvailabilityByTavernLevel = new()
         {
             { ProductType.Ale, 1 },
             { ProductType.Bread, 1 },
@@ -72,26 +64,17 @@ namespace Tavern_Rush
         public int Price { get; private set; }
         public ProductType ProductType { get; private set; }
 
+
         public Product(ProductType productKey)
         {
-            Name = ProductNames[productKey];
-            Price = ProductPrices[productKey];
+            Name = _productNames[productKey];
+            Price = _productPrices[productKey];
             ProductType = productKey;
-        }
-
-        public int GetPrice(ProductType product)
-        {
-            return ProductPrices[product];
-        }
-
-        public string GetName(ProductType product)
-        {
-            return ProductNames[product];
         }
 
         public int GetAvailabilityByLevel(ProductType product)
         {
-            return productAvailabilityByTavernLevel[product];
+            return _productAvailabilityByTavernLevel[product];
         }
     }
 }

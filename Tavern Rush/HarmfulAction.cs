@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
     public enum HarmfulActionType
     {
@@ -19,7 +13,7 @@ namespace Tavern_Rush
 
     internal class HarmfulAction
     {
-        private static readonly Dictionary<HarmfulActionType, string> _actionsName = new Dictionary<HarmfulActionType, string>()
+        private readonly Dictionary<HarmfulActionType, string> _actionsName = new Dictionary<HarmfulActionType, string>()
         {
             { HarmfulActionType.BeerSpilled, "Пролить пиво" },
             { HarmfulActionType.Stumble, "Споткнуться" },
@@ -29,11 +23,10 @@ namespace Tavern_Rush
             { HarmfulActionType.FumbleTheOrder, "Уронить заказ" },
             { HarmfulActionType.ArgueWithAClient, "Ругаться с посетителем" }
         };
-        private HarmfulActionType _event;
 
-        public string[] createRandomHarmfulActions(int tavernLevel, Random random)
+        public string[] CreateRandomHarmfulActions(int tavernLevel, Random random)
         {
-            List<string> HarmfulActions = new List<string>();
+            List<string> harmfulActions = new List<string>();
             HarmfulActionType randomAction;
             switch (tavernLevel)
             {
@@ -41,59 +34,59 @@ namespace Tavern_Rush
                     for (int i = 1; i <= tavernLevel; i++)
                     {
                         randomAction = RandomizeHarmfulActionType(random);
-                        while (HarmfulActions.Contains(_actionsName[randomAction]))
+                        while (harmfulActions.Contains(_actionsName[randomAction]))
                         {
                             randomAction = RandomizeHarmfulActionType(random);
                         }
-                        HarmfulActions.Add(_actionsName[randomAction]);
+                        harmfulActions.Add(_actionsName[randomAction]);
                     }
-                    return HarmfulActions.ToArray();
+                    return harmfulActions.ToArray();
                 case 2:
                     for (int i = 1; i <= tavernLevel; i++)
                     {
                         randomAction = RandomizeHarmfulActionType(random);
-                        while (HarmfulActions.Contains(_actionsName[randomAction]))
+                        while (harmfulActions.Contains(_actionsName[randomAction]))
                         {
                             randomAction = RandomizeHarmfulActionType(random);
                         }
-                        HarmfulActions.Add(_actionsName[randomAction]);
+                        harmfulActions.Add(_actionsName[randomAction]);
                     }
-                    return HarmfulActions.ToArray();
+                    return harmfulActions.ToArray();
                 case 3:
                     for (int i = 1; i <= tavernLevel; i++)
                     {
                         randomAction = RandomizeHarmfulActionType(random);
-                        while (HarmfulActions.Contains(_actionsName[randomAction]))
+                        while (harmfulActions.Contains(_actionsName[randomAction]))
                         {
                             randomAction = RandomizeHarmfulActionType(random);
                         }
-                        HarmfulActions.Add(_actionsName[randomAction]);
+                        harmfulActions.Add(_actionsName[randomAction]);
                     }
-                    return HarmfulActions.ToArray();
+                    return harmfulActions.ToArray();
                 case 4:
                     for (int i = 1; i <= tavernLevel; i++)
                     {
                         randomAction = RandomizeHarmfulActionType(random);
-                        while (HarmfulActions.Contains(_actionsName[randomAction]))
+                        while (harmfulActions.Contains(_actionsName[randomAction]))
                         {
                             randomAction = RandomizeHarmfulActionType(random);
                         }
-                        HarmfulActions.Add(_actionsName[randomAction]);
+                        harmfulActions.Add(_actionsName[randomAction]);
                     }
-                    return HarmfulActions.ToArray();
+                    return harmfulActions.ToArray();
                 case 5:
                     for (int i = 1; i <= tavernLevel; i++)
                     {
                         randomAction = RandomizeHarmfulActionType(random);
-                        while (HarmfulActions.Contains(_actionsName[randomAction]))
+                        while (harmfulActions.Contains(_actionsName[randomAction]))
                         {
                             randomAction = RandomizeHarmfulActionType(random);
                         }
-                        HarmfulActions.Add(_actionsName[randomAction]);
+                        harmfulActions.Add(_actionsName[randomAction]);
                     }
-                    return HarmfulActions.ToArray();
+                    return harmfulActions.ToArray();
                 default:
-                    return HarmfulActions.ToArray();
+                    return harmfulActions.ToArray();
             }
         }
 

@@ -1,45 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
     internal class Tavern
     {
-        private int _money;
-        private int _reputation;
-        private bool IsOpen;
-        private Perk[] Perks;
-        private int TavernLevel;
+        private int _money = 20;
+        private int _reputation = 50;
+        private bool _isOpen = true;
+        private int _tavernLevel = 1;
 
-
-        public Tavern()
-        {
-            _reputation = 50;
-            _money = 20;
-            TavernLevel = 1;
-            IsOpen = true;
-        }
 
         public void OpenTavern()
         {
             Random random = new Random();
-            Product product new Product();
-            Warehouse warehouse = new Warehouse(TavernLevel, productInstances);
-            List<string> productsInWarehouse = warehouse.GetProductsFromWarehouse();
-            Order order = new Order(GenerateCountProducts(TavernLevel), TavernLevel, productsInWarehouse, random);
+            Warehouse warehouse = new Warehouse(_tavernLevel);
+            List<Product> productsInWarehouse = warehouse.GetProductsFromWarehouse();
+            Order order = new Order(GenerateCountProducts(_tavernLevel), _tavernLevel, productsInWarehouse, random);
             UsefulAction usefulAction = new UsefulAction();
             HarmfulAction harmfulAction = new HarmfulAction();
-            string[] harmfulActions = harmfulAction.createRandomHarmfulActions(TavernLevel, random);
+            string[] harmfulActions = harmfulAction.CreateRandomHarmfulActions(_tavernLevel, random);
             string[] usefulActions = usefulAction.CreateActionNames();
             var actions = usefulActions.Concat(harmfulActions).ToArray();
-            string[] mixedActionsArray = GameLogic.mixActions(actions, random, "Заказать продукты на склад");
+            string[] mixedActionsArray = GameLogic.MixActions(actions, random, "Заказать продукты на склад");
             int[] validCode = GameLogic.ConvertArrayToValidCode(mixedActionsArray);
 
-            while (IsOpen)
+            while (_isOpen)
             {
-                Client client = new Client();
+                Client client = new Client(random);
                 string[] products = order.CreateOrder();
                 //Console.WriteLine("Назовите Вашу таверну: ");
                 //string tavernName = Console.ReadLine();
@@ -62,16 +47,37 @@ namespace Tavern_Rush
                     Console.WriteLine($"{i + 1}. {mixedActionsArray[i]}");
                 }
                 Console.WriteLine();
+
                 string orderCode = Console.ReadLine();
-                if (GameLogic.isValidCode(orderCode, validCode, client))
+
+                if (int.TryParse(orderCode, out int parsedOrderCode))
                 {
-                    Console.WriteLine("Спасибо, друг! Держи монету");
-                    _money += order.OrderPrice;
+                    if (parsedOrderCode == 7)
+                    {
+                        warehouse.RefillProducts(_tavernLevel);
+                    }
+                    else
+                    {
+                        if (GameLogic.IsValidCode(parsedOrderCode.ToString(), validCode, client))
+                        {
+                            Console.WriteLine("Спасибо, друг! Держи монету\n");
+                            warehouse.UseProductForOrder(order.GetProductsFromOrder());
+                            _money += order.OrderPrice;
+                            _reputation += 2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Мда, даже обслужить нормально не могут. Всего хорошего!\n");
+                            _reputation -= 10;
+                            CheckReputation();
+                        }
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Мда, даже обслужить нормально не могут. Всего хорошего!");
+                    Console.WriteLine("Неверный формат ввода! Будьте внимательны, можно растерять всю репутацию");
                     _reputation -= 10;
+                    CheckReputation();
                 }
             }
         }
@@ -84,6 +90,15 @@ namespace Tavern_Rush
         {
             Console.WriteLine($"Ваше золото {_money}");
             Console.WriteLine($"Ваша репутация {_reputation}\n");
+        }
+
+        private void CheckReputation()
+        {
+            if (_reputation <= 0)
+            {
+                _isOpen = false;
+                Console.WriteLine("Игра окончена!");
+            }
         }
     }
 }

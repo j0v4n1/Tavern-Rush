@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
     internal class Order
     {
-        private List<string> _orderProducts = new List<string>();
+        private readonly Dictionary<Product, string> _orderProducts = new Dictionary<Product, string>();
         public int OrderPrice { get; private set; }
 
-        public Order(int countProducts, int tavernLevel, List<ProductType> availableProductsInWarehouse, Random random, Product product)
+        public Order(int countProducts, int tavernLevel, List<Product> availableProductsInWarehouse, Random random)
         {
             List<int> usedIndexes = new List<int>();
             if (tavernLevel < 3)
             {
                 for (int i = 0; i < countProducts; i++)
                 {
-                    _orderProducts.Add(product.GetName(availableProductsInWarehouse[i]));
+                    _orderProducts.Add(availableProductsInWarehouse[i], availableProductsInWarehouse[i].Name);
+                    OrderPrice += availableProductsInWarehouse[i].Price;
                 }
             }
             else
@@ -32,15 +27,34 @@ namespace Tavern_Rush
                         continue;
                     }
                     usedIndexes.Add(randomIndex);
-                    _orderProducts.Add(product.GetName(availableProductsInWarehouse[randomIndex]));
-                    OrderPrice += product.GetPrice(availableProductsInWarehouse[randomIndex]);
+                    _orderProducts.Add(availableProductsInWarehouse[randomIndex], availableProductsInWarehouse[randomIndex].Name);
+                    OrderPrice += availableProductsInWarehouse[randomIndex].Price;
                 }
             }
         }
 
         public string[] CreateOrder()
         {
-            return _orderProducts.ToArray();
+            List<string> order = new List<string>();
+
+            foreach (var item in _orderProducts)
+            {
+                order.Add(item.Value);
+            }
+
+            return order.ToArray();
+        }
+
+        public Product[] GetProductsFromOrder()
+        {
+            List<Product> order = new List<Product>();
+
+            foreach (var item in _orderProducts)
+            {
+                order.Add(item.Key);
+            }
+
+            return order.ToArray();
         }
     }
 }

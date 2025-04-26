@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tavern_Rush
+﻿namespace Tavern_Rush
 {
     internal class Program
     {
