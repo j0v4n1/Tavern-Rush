@@ -1,14 +1,12 @@
 ﻿namespace Tavern_Rush
 {
-    internal class Program
+  internal abstract class Program
+  {
+    public static async Task Main()
     {
-        static void Main(string[] args)
-        {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Tavern tavern = new Tavern();
-            tavern.OpenTavern();
-        }
-
+      Console.OutputEncoding = System.Text.Encoding.UTF8;
+      Tavern tavern = new Tavern();
+      await tavern.StartGame();
     }
-
+  }
 }
