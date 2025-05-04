@@ -1,7 +1,24 @@
 ﻿namespace Tavern_Rush
 {
-  internal abstract class GameLogic
+  internal class GameManager
   {
+    public Random Random { get; private set; }
+    public Warehouse Warehouse { get; private set; }
+    public Order Order { get; private set; }
+    private readonly UsefulAction _usefulAction;
+    private readonly HarmfulAction _harmfulAction;
+
+
+    public GameManager(int tavernLevel, Func<int, bool> payForGoods, Func<int> getMoney, Func<int> getReputation)
+    {
+      Random = new Random();
+      Warehouse = new Warehouse(tavernLevel, payForGoods, getMoney, getReputation);
+      var productsInWarehouse = Warehouse.GetProductsFromWarehouse();
+      Order = new Order(tavernLevel, productsInWarehouse, Random);
+      _usefulAction = new UsefulAction();
+      _harmfulAction = new HarmfulAction();
+    }
+
     public static int[] ConvertArrayToValidCode(string[] actions)
     {
       int[] validCode = new int[5];
@@ -55,7 +72,7 @@
       return mistakes <= client.AllowedMistakes;
     }
 
-    public static string[] MixActions(string[] actions, Random random, string specialAction)
+    private static string[] MixActions(string[] actions, Random random, string specialAction)
     {
       List<string> mixedActions = [];
       List<int> usedIndexes = [];
@@ -83,6 +100,14 @@
       mixedActions.Add(tempAction);
       string[] mixedActionsArray = mixedActions.ToArray();
       return mixedActionsArray;
+    }
+
+    public string[] InitializeActions(int tavernLevel)
+    {
+      string[] harmfulActions = _harmfulAction.CreateRandomHarmfulActions(tavernLevel, Random);
+      string[] usefulActions = _usefulAction.CreateActionNames();
+      string[] actions = usefulActions.Concat(harmfulActions).ToArray();
+      return MixActions(actions, Random, "Заказать продукты на склад");
     }
   }
 }

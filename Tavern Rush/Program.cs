@@ -2,11 +2,11 @@
 {
   internal abstract class Program
   {
-    public static async Task Main()
+    public static void Main()
     {
       Console.OutputEncoding = System.Text.Encoding.UTF8;
       Tavern tavern = new Tavern();
-      await tavern.StartGame();
+      tavern.StartGame();
     }
   }
 }

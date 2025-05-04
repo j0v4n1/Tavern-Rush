@@ -3,12 +3,18 @@
   internal class Warehouse
   {
     private readonly Dictionary<ProductType, (Product product, int quantity)> _stock = new();
-    public bool IsRefillStock { get; private set; }
+    private bool _isRefillStock;
+    private readonly Func<int, bool> _payForGoods;
+    private readonly Func<int> _getMoney;
+    private readonly Func<int> _getReputation;
 
-    public Warehouse(int tavernLevel)
+    public Warehouse(int tavernLevel, Func<int, bool> payForGoods, Func<int> getMoney, Func<int> getReputation)
     {
-      IsRefillStock = false;
+      _isRefillStock = false;
       GenerateWarehouse(tavernLevel);
+      _payForGoods = payForGoods;
+      _getMoney = getMoney;
+      _getReputation = getReputation;
     }
 
     public Dictionary<Product, int> GetProductsNameAndQuantity()
@@ -37,7 +43,7 @@
       }
     }
 
-    public Dictionary<int, Product> GetAvailableProducts(int tavernLevel)
+    private Dictionary<int, Product> GetAvailableProducts(int tavernLevel)
     {
       Dictionary<int, Product> product = [];
       int i = 1;
@@ -51,12 +57,12 @@
       return product;
     }
 
-    public static bool IsEnoughMoney(int money, int totalSum)
+    private static bool IsEnoughMoney(int money, int totalSum)
     {
       return money >= totalSum;
     }
 
-    public static int CalculateStockOrderTotal(Dictionary<int, Product> products, int product, int quantity)
+    private static int CalculateStockOrderTotal(Dictionary<int, Product> products, int product, int quantity)
     {
       return products.Where(item => item.Key == product).Sum(item => item.Value.Price * quantity);
     }
@@ -71,7 +77,7 @@
       }
     }
 
-    public void RefillStock(Dictionary<int, Product> products, int productFill, int quantityFill)
+    private void RefillStock(Dictionary<int, Product> products, int productFill, int quantityFill)
     {
       Product item = products.Where(item => item.Key == productFill).Select(item => item.Value).First();
       var (product, quantity) = _stock[item.ProductType];
@@ -81,12 +87,46 @@
 
     public void ActivateRefillStock()
     {
-      IsRefillStock = true;
+      _isRefillStock = true;
     }
 
-    public void DeactivateRefillStock()
+    private void DeactivateRefillStock()
     {
-      IsRefillStock = false;
+      _isRefillStock = false;
+    }
+
+    public void RefillProducts(Warehouse warehouse, int tavernLevel)
+    {
+      while (warehouse._isRefillStock)
+      {
+        UiManager.ShowInfoStore(warehouse);
+        UiManager.ShowShortMessage(ShortMessage.ChooseProductToRefill);
+        Dictionary<int, Product> availableProducts = warehouse.GetAvailableProducts(tavernLevel);
+        UiManager.ShowAvailableProducts(availableProducts);
+        int product = Convert.ToInt32(Console.ReadLine());
+        if (product == 0)
+        {
+          DeactivateRefillStock();
+          break;
+        }
+
+        UiManager.ShowShortMessage(ShortMessage.Quantity);
+        int quantity = Convert.ToInt32(Console.ReadLine());
+        int totalSum = CalculateStockOrderTotal(availableProducts, product, quantity);
+        
+        if (IsEnoughMoney(_getMoney(), totalSum))
+        {
+          UiManager.ShowTotalSum(totalSum);
+          UiManager.ShowShortMessage(ShortMessage.PressAnyKeyToContinue);
+          warehouse.RefillStock(availableProducts, product, quantity);
+          _payForGoods(totalSum);
+          UiManager.ShowTavernInfo(_getMoney(), _getReputation());
+        }
+        else
+        {
+          UiManager.ShowMessageNotEnoughMoney();
+        }
+      }
     }
   }
 }

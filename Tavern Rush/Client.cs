@@ -45,14 +45,14 @@
     };
 
     public string Name { get; private set; }
-    private readonly Temperament _temperament;
+    public Temperament Temperament { get; private set; }
     public int TimeToServe { get; private set; }
     public int AllowedMistakes { get; private set; }
 
     public Client(Random random)
     {
-      _temperament = GenerateRandomTemperament(random);
-      SetServiceParameters(_temperament);
+      Temperament = GenerateRandomTemperament(random);
+      SetServiceParameters(Temperament);
       Name = _names[random.Next(0, _names.Count)];
     }
 
@@ -93,9 +93,9 @@
       }
     }
 
-    public void SayPhrase()
+    public string GetPhrase(Temperament temperament)
     {
-      Console.WriteLine($"{_clientPhrases[_temperament]}");
+      return _clientPhrases[temperament];
     }
 
     public static Dictionary<Client, CancellationToken> GenerateClientWithToken(Client client,

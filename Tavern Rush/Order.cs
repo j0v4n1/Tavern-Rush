@@ -5,8 +5,9 @@
     private readonly Dictionary<Product, string> _orderProducts = new();
     public int OrderPrice { get; }
 
-    public Order(int countProducts, int tavernLevel, List<Product> availableProductsInWarehouse, Random random)
+    public Order(int tavernLevel, List<Product> availableProductsInWarehouse, Random random)
     {
+      int countProducts = tavernLevel + 1;
       List<int> usedIndexes = [];
       if (tavernLevel < 3)
       {
@@ -43,6 +44,11 @@
     public Product[] GetProductsFromOrder()
     {
       return _orderProducts.Select(item => item.Key).ToArray();
+    }
+
+    public static int GenerateCountProducts(int tavernLevel)
+    {
+      return tavernLevel + 1;
     }
   }
 }

@@ -11,7 +11,7 @@
 
   internal class Perk
   {
-    private Dictionary<PerkType, string> _perksNames = new()
+    private readonly Dictionary<PerkType, string> _perksNames = new()
     {
       { PerkType.QuickReflexes, "Быстрая реакция" },
       { PerkType.TipMagnet, "Магнит для чаевых" },
@@ -29,15 +29,15 @@
       { PerkType.ExperiencedBartender, "С вероятностью 10% принимается любой порядок действий" }
     };
 
-    public void ShowAllPerks()
+    public string[] GetAllPerksNames()
     {
-      Console.WriteLine("Выберите один из доступных улучшений таверны:");
-      int i = 1;
-      foreach (KeyValuePair<PerkType, string> item in _perksNames)
-      {
-        Console.WriteLine($"{i}. {item.Value} - {_perksDescribe[item.Key]}");
-        i++;
-      }
+      return _perksNames.Select(item => item.Value).ToArray();
     }
+    
+    public string[] GetAllPerksDescribe()
+    {
+      return _perksDescribe.Select(item => item.Value).ToArray();
+    }
+    
   }
 }
